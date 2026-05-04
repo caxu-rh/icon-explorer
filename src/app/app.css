@@ -1,0 +1,206 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* App title: left of utilities, vertically centered with the nav toggle (PF main is flex + align-items center). */
+.icon-app-masthead .pf-v6-c-masthead__brand {
+  align-items: center;
+}
+
+.icon-browser__dense-grid {
+  display: grid;
+  align-items: stretch;
+}
+
+.icon-browser__dense-grid-scrollport {
+  width: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  /* Default height; component may set inline height for reliable layout in constrained trees. */
+  height: clamp(16rem, 55vh, 36rem);
+}
+
+.icon-browser__cell.pf-v6-c-button.pf-m-plain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 2px;
+  /* Invisible border keeps cell sizing (see gridCellMinPx) without showing a grid outline. */
+  border: 1px solid transparent;
+  border-radius: var(--pf-t--global--border--radius--small);
+  /* Stronger hover fill while still using PF’s plain hover pipeline (no second background layer). */
+  --pf-v6-c-button--m-plain--hover--BackgroundColor: var(--pf-t--global--background--color--200);
+  /* PF animates `background` by default; that felt inverted next to z-index overlap — keep hover instant. */
+  --pf-v6-c-button--TransitionProperty: color, border-color;
+}
+
+/*
+ * In dark theme, global background--200 is still a light gray; it washes out icons on the grid.
+ * Use PatternFly’s plain-action hover token (translucent in dark) so hover stays visible.
+ */
+.pf-v6-theme-dark .icon-browser__cell.pf-v6-c-button.pf-m-plain {
+  --pf-v6-c-button--m-plain--hover--BackgroundColor: var(--pf-t--global--background--color--action--plain--hover);
+}
+
+.icon-browser__cell-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+/**
+ * Sticky overlay drawer while Page main scrolls:
+ * - overflow visible on root so sticky can use the Page main scrollport (PF defaults overflow-x hidden).
+ * - Grid stack on __main: content stays full width; panel paints on top (same cell, higher z-index).
+ * - transform none when expanded so position:sticky is not trapped by PF’s panel transform.
+ * - margin-inline-end on expanded panel keeps PF’s outer box-shadow mostly inside the main clip.
+ */
+.icon-browser__drawer.pf-v6-c-drawer {
+  overflow: visible;
+  min-width: 0;
+}
+
+.icon-browser__drawer.pf-v6-c-drawer .pf-v6-c-drawer__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  overflow: visible;
+}
+
+.icon-browser__drawer.pf-v6-c-drawer .pf-v6-c-drawer__main > .pf-v6-c-drawer__content {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Let sticky use the page scrollport: strip transform on the panel (PF uses translateX for motion). */
+.icon-browser__drawer.pf-v6-c-drawer.pf-m-expanded > .pf-v6-c-drawer__main > .icon-browser__drawer-panel.pf-v6-c-drawer__panel:not(.pf-m-resizable) {
+  transform: none;
+  margin-inline-end: var(--pf-t--global--spacer--xs);
+}
+
+:where(.pf-v6-m-dir-rtl, [dir=rtl])
+  .icon-browser__drawer.pf-v6-c-drawer.pf-m-expanded
+  > .pf-v6-c-drawer__main
+  > .icon-browser__drawer-panel.pf-v6-c-drawer__panel:not(.pf-m-resizable) {
+  transform: none;
+  margin-inline-end: var(--pf-t--global--spacer--xs);
+}
+
+/**
+ * Even drawer inset: PF stacks panel (sm block) + head (sm/md) + row-gap (sm) + body (md),
+ * which reads uneven vs horizontal. Outer panel owns md padding; head/body padding cleared.
+ */
+.icon-browser__drawer-panel.pf-v6-c-drawer__panel:not(.pf-m-resizable) {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: end;
+  align-self: start;
+  position: sticky;
+  top: 0;
+  width: min(30rem, 96vw);
+  max-width: 100%;
+  max-height: 100dvh;
+  border-radius: var(--pf-t--global--border--radius--medium);
+  --pf-v6-c-drawer__panel--BorderBlockStartWidth: var(--pf-t--global--border--width--divider--default);
+  --pf-v6-c-drawer__panel--BorderBlockEndWidth: var(--pf-t--global--border--width--divider--default);
+  --pf-v6-c-drawer__panel--BorderInlineStartWidth: var(--pf-t--global--border--width--divider--default);
+  --pf-v6-c-drawer__panel--BorderInlineEndWidth: var(--pf-t--global--border--width--divider--default);
+  --pf-v6-c-drawer__panel--BorderColor: var(--pf-t--global--border--color--default);
+  --pf-v6-c-drawer__panel--PaddingBlockStart: var(--pf-t--global--spacer--md);
+  --pf-v6-c-drawer__panel--PaddingBlockEnd: var(--pf-t--global--spacer--md);
+  --pf-v6-c-drawer__panel--RowGap: var(--pf-t--global--spacer--md);
+  padding-inline-start: var(--pf-t--global--spacer--md);
+  padding-inline-end: var(--pf-t--global--spacer--md);
+  --pf-v6-c-drawer__head--PaddingBlockStart: 0;
+  --pf-v6-c-drawer__head--PaddingBlockEnd: 0;
+  --pf-v6-c-drawer__head--PaddingInlineStart: 0;
+  --pf-v6-c-drawer__head--PaddingInlineEnd: 0;
+  --pf-v6-c-drawer__panel__body--PaddingBlockStart: 0;
+  --pf-v6-c-drawer__panel__body--PaddingBlockEnd: 0;
+  --pf-v6-c-drawer__panel__body--PaddingInlineStart: 0;
+  --pf-v6-c-drawer__panel__body--PaddingInlineEnd: 0;
+}
+
+/**
+ * Drawer preview: classic checkerboard so transparent SVG pixels read clearly;
+ * border + square frame mark the preview bounds.
+ */
+.icon-browser__drawer-preview {
+  --icon-browser-drawer-checker-base: var(--pf-t--global--background--color--100);
+  --icon-browser-drawer-checker-tile: var(--pf-t--global--background--color--200);
+
+  box-sizing: border-box;
+  max-width: 100%;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  overflow: hidden;
+  border-radius: var(--pf-t--global--border--radius--small);
+  border: 1px solid var(--pf-t--global--border--color--100);
+  background-color: var(--icon-browser-drawer-checker-base);
+  background-image:
+    linear-gradient(
+      45deg,
+      var(--icon-browser-drawer-checker-tile) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--icon-browser-drawer-checker-tile) 75%
+    ),
+    linear-gradient(
+      45deg,
+      var(--icon-browser-drawer-checker-tile) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--icon-browser-drawer-checker-tile) 75%
+    );
+  background-size: 12px 12px;
+  background-position: 0 0, 6px 6px;
+}
+
+.icon-browser__drawer-preview rh-icon {
+  background-color: transparent;
+}
+
+/* Dark theme: checker must use dark-surface tiers so white/light icons stay legible. */
+.pf-v6-theme-dark .icon-browser__drawer-preview {
+  --icon-browser-drawer-checker-base: var(--pf-t--global--dark--background--color--200);
+  --icon-browser-drawer-checker-tile: var(--pf-t--global--dark--background--color--300);
+  border-color: var(--pf-t--global--border--color--default);
+}
+
+/**
+ * Black icon on dark UI / white icon on light UI: use the opposite scheme’s checker so the glyph
+ * does not sit on same midtones as the tiles.
+ *
+ * On light :root, `--pf-t--global--dark--background--color--*` is undefined (PF only sets it under
+ * `.pf-v6-theme-dark`), so use palette grays — same values PF maps those tokens to in dark theme.
+ */
+.icon-browser__drawer-preview.icon-browser__drawer-preview--inverse-checker {
+  --icon-browser-drawer-checker-base: var(--pf-t--color--gray--80);
+  --icon-browser-drawer-checker-tile: var(--pf-t--color--gray--70);
+  border-color: var(--pf-t--global--border--color--default);
+}
+
+.pf-v6-theme-dark .icon-browser__drawer-preview.icon-browser__drawer-preview--inverse-checker {
+  --icon-browser-drawer-checker-base: var(--pf-t--global--background--color--100);
+  --icon-browser-drawer-checker-tile: var(--pf-t--global--background--color--200);
+  border-color: var(--pf-t--global--border--color--100);
+}
+
+.icon-browser__snippet-textarea {
+  font-family: var(--pf-t--global--font--family--mono);
+}
